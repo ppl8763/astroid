@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from routes.userroute import router as user
 from routes.astroidshow import router as asteroid
@@ -18,12 +19,25 @@ allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Temporarily allowing all to debug deployment issues
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "message": "Cosmic Watch API is active"}
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    print(f"🔥 GLOBAL ERROR: {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error", "message": str(exc)},
+        headers={"Access-Control-Allow-Origin": "*"}
+    )
 
 
 app.include_router(user)
