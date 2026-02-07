@@ -18,7 +18,7 @@ allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://astroid-backend.onrender.com"],
+    allow_origins=["*"], # Temporarily allowing all to debug deployment issues
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
